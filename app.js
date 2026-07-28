@@ -1231,17 +1231,17 @@ function activarAnimacion(objetivo, tipo, opciones = {}) {
         const cfg = ANIM_CONFIG[cat] || ANIM_CONFIG.defensiva;
         const cx = (objetivo === 'jugador') ? 80 : 390;
         animaciones.ondaChoque = { x: cx, y: 155, radio: 8, maxRadio: 55, vida: 30, maxVida: 30, color: cfg.ondaColor };
-        // Partículas de escudo flotando hacia arriba (reducidas de 10 a 6)
-        for (let i = 0; i < 6; i++) {
+        // Partículas de escudo flotando hacia arriba
+        for (let i = 0; i < 10; i++) {
             animaciones.particulas.push({
                 x: cx + (Math.random() * 50 - 25),
                 y: 155 + (Math.random() * 30),
-                vx: (Math.random() - 0.5) * 1.2,
-                vy: -(1.2 + Math.random() * 1.8),
-                vida: 35 + Math.random() * 25,
-                maxVida: 60,
+                vx: (Math.random() - 0.5) * 1.5,
+                vy: -(1.5 + Math.random() * 2),
+                vida: 40 + Math.random() * 30,
+                maxVida: 70,
                 color: cfg.particleColor,
-                size: 2 + Math.random() * 1.5
+                size: 2 + Math.random() * 2
             });
         }
         if (opciones.texto) {
@@ -1296,20 +1296,19 @@ function _explotarImpacto(px, py, cfg, objetivo, tipoCarta) {
     if (tipoCarta === 'mejora') {
         // === AURA VERDE: Mamani absorbe la coca ===
         animaciones.ondaChoque = { x: 80, y: 150, radio: 5, maxRadio: 55, vida: 35, maxVida: 35, color: '#2ecc71' };
-        animaciones.flashPantalla = 4;
+        animaciones.flashPantalla = 5;
         animaciones.flashColor = 'rgba(46,204,113,';
-        // Partículas de curación (reducidas de 20 a 12)
-        for (let i = 0; i < 12; i++) {
-            const ang = (Math.PI * 2 / 12) * i;
-            const d2 = 18 + Math.random() * 14;
+        for (let i = 0; i < 20; i++) {
+            const ang = (Math.PI * 2 / 20) * i;
+            const d2 = 20 + Math.random() * 15;
             animaciones.particulas.push({
                 x: 80 + Math.cos(ang) * d2,
                 y: 150 + Math.sin(ang) * d2,
                 vx: Math.cos(ang) * 0.5,
-                vy: -(1.5 + Math.random() * 2),
-                vida: 45 + Math.random() * 25, maxVida: 70,
+                vy: -(2 + Math.random() * 2.5),
+                vida: 50 + Math.random() * 30, maxVida: 80,
                 color: (i % 2 === 0) ? '#2ecc71' : '#aaffcc',
-                size: 2 + Math.random() * 1.5
+                size: 2 + Math.random() * 2
             });
         }
         animaciones.textosFlotantes.push({
@@ -1322,7 +1321,7 @@ function _explotarImpacto(px, py, cfg, objetivo, tipoCarta) {
     }
 
     // Flash de pantalla
-    animaciones.flashPantalla = 6;
+    animaciones.flashPantalla = 7;
     animaciones.flashColor = cfg.flashColor;
     // Onda de choque
     animaciones.ondaChoque = { x: px, y: py, radio: 5, maxRadio: 65, vida: 22, maxVida: 22, color: cfg.ondaColor };
@@ -1330,21 +1329,21 @@ function _explotarImpacto(px, py, cfg, objetivo, tipoCarta) {
     animaciones.hitSparks.push({
         x: px, y: py,
         tipo: cfg,
-        vida: 18, maxVida: 18,
+        vida: 20, maxVida: 20,
         rayos: cfg.numRayos,
         angOffset: Math.random() * Math.PI
     });
-    // Partículas de impacto (reducidas de 16 a 10 para mejor rendimiento)
-    for (let i = 0; i < 10; i++) {
-        const ang = (Math.PI * 2 / 10) * i + Math.random() * 0.4;
-        const vel = 2 + Math.random() * 3.5;
+    // Particulas de impacto
+    for (let i = 0; i < 16; i++) {
+        const ang = (Math.PI * 2 / 16) * i + Math.random() * 0.4;
+        const vel = 2.5 + Math.random() * 4;
         animaciones.particulas.push({
             x: px, y: py,
             vx: Math.cos(ang) * vel,
             vy: Math.sin(ang) * vel - 1,
-            vida: 22 + Math.random() * 15, maxVida: 37,
+            vida: 25 + Math.random() * 20, maxVida: 45,
             color: (i % 2 === 0) ? cfg.particleColor : cfg.particleColor2,
-            size: 1.5 + Math.random() * 2
+            size: 1.5 + Math.random() * 2.5
         });
     }
 }
@@ -1562,16 +1561,13 @@ function dibujarEfectosEspeciales() {
 
         } else if (p.tipo === 'defensiva') {
 
-            // Orbe de escudo — círculo con brillo (gradiente cacheado)
+            // Orbe de escudo — círculo con brillo
             const r = 7;
-            if (!p._grad) {
-                const g = ctx.createRadialGradient(0, 0, 1, 0, 0, r);
-                g.addColorStop(0, '#ffffff');
-                g.addColorStop(0.4, p.cfg.proyectilColor2);
-                g.addColorStop(1, p.cfg.proyectilColor);
-                p._grad = g;
-            }
-            ctx.fillStyle = p._grad;
+            const grad = ctx.createRadialGradient(0, 0, 1, 0, 0, r);
+            grad.addColorStop(0, '#ffffff');
+            grad.addColorStop(0.4, p.cfg.proyectilColor2);
+            grad.addColorStop(1, p.cfg.proyectilColor);
+            ctx.fillStyle = grad;
             ctx.beginPath();
             ctx.arc(0, 0, r, 0, Math.PI * 2);
             ctx.fill();
@@ -1584,16 +1580,13 @@ function dibujarEfectosEspeciales() {
             ctx.stroke();
 
         } else if (p.tipo === 'elemental') {
-            // Bola de energía elemental con anillo giratorio (gradiente cacheado)
+            // Bola de energía elemental con anillo giratorio
             const r = 8;
-            if (!p._grad) {
-                const g = ctx.createRadialGradient(0, 0, 1, 0, 0, r);
-                g.addColorStop(0, '#ffffff');
-                g.addColorStop(0.5, p.cfg.proyectilColor2);
-                g.addColorStop(1, p.cfg.proyectilColor);
-                p._grad = g;
-            }
-            ctx.fillStyle = p._grad;
+            const grad = ctx.createRadialGradient(0, 0, 1, 0, 0, r);
+            grad.addColorStop(0, '#ffffff');
+            grad.addColorStop(0.5, p.cfg.proyectilColor2);
+            grad.addColorStop(1, p.cfg.proyectilColor);
+            ctx.fillStyle = grad;
             ctx.beginPath();
             ctx.arc(0, 0, r, 0, Math.PI * 2);
             ctx.fill();
@@ -1635,10 +1628,10 @@ function dibujarEfectosEspeciales() {
             ctx.beginPath();
             ctx.ellipse(-2, -2.5, 2.5, 1.2, -0.4, 0, Math.PI * 2);
             ctx.fill();
-            if (Math.random() < 0.25) {  // Reducido de 0.45 para menos partículas por frame
+            if (Math.random() < 0.45) {
                 animaciones.particulas.push({
                     x: p.x + (Math.random() * 5 - 2.5), y: p.y + (Math.random() * 5 - 2.5),
-                    vx: (Math.random() - 0.5) * 0.8, vy: -(0.5 + Math.random()), vida: 14, maxVida: 14,
+                    vx: (Math.random() - 0.5) * 0.8, vy: -(0.5 + Math.random()), vida: 18, maxVida: 18,
                     color: Math.random() < 0.5 ? '#2ecc71' : '#a9dfbf', size: 1.5
                 });
             }
@@ -1670,11 +1663,11 @@ function dibujarEfectosEspeciales() {
                     ctx.beginPath(); ctx.moveTo(s * 7, -5); ctx.lineTo(s * 9, -8); ctx.stroke();
                 });
             });
-            if (Math.random() < 0.3) {  // Reducido de 0.5 para menos partículas por frame
+            if (Math.random() < 0.5) {
                 animaciones.particulas.push({
                     x: p.x + (Math.random() * 10 - 5), y: p.y + (Math.random() * 10 - 5),
-                    vx: (Math.random() - 0.5) * 1.0, vy: -(0.3 + Math.random() * 0.7), vida: 12, maxVida: 12,
-                    color: Math.random() < 0.5 ? '#8e44ad' : '#ff0000', size: 1.5
+                    vx: (Math.random() - 0.5) * 1.2, vy: -(0.3 + Math.random() * 0.8), vida: 15, maxVida: 15,
+                    color: Math.random() < 0.5 ? '#8e44ad' : '#ff0000', size: 2
                 });
             }
         }
@@ -1703,31 +1696,27 @@ function dibujarEfectosEspeciales() {
             ctx.lineTo(Math.cos(ang) * len1, Math.sin(ang) * len1);
             ctx.stroke();
         }
-        // Núcleo del spark (gradiente cacheado en el spark)
-        if (!s._gradCore) {
-            const g = ctx.createRadialGradient(0, 0, 0, 0, 0, 7);
-            g.addColorStop(0, '#ffffff');
-            g.addColorStop(0.5, s.tipo.sparkColor2);
-            g.addColorStop(1, 'rgba(0,0,0,0)');
-            s._gradCore = g;
-        }
-        ctx.fillStyle = s._gradCore;
+        // Núcleo del spark
+        const gradCore = ctx.createRadialGradient(0, 0, 0, 0, 0, 7 * scale);
+        gradCore.addColorStop(0, '#ffffff');
+        gradCore.addColorStop(0.5, s.tipo.sparkColor2);
+        gradCore.addColorStop(1, 'rgba(0,0,0,0)');
+        ctx.fillStyle = gradCore;
         ctx.beginPath();
         ctx.arc(0, 0, 7 * scale, 0, Math.PI * 2);
         ctx.fill();
         ctx.restore();
     });
 
-    // --- Partículas (batch: un solo save/restore para todas) ---
-    if (animaciones.particulas.length > 0) {
+    // --- Partículas ---
+    animaciones.particulas.forEach(p => {
+        const alfa = p.vida / p.maxVida;
         ctx.save();
-        animaciones.particulas.forEach(p => {
-            ctx.globalAlpha = p.vida / p.maxVida;
-            ctx.fillStyle = p.color;
-            ctx.fillRect(p.x - p.size * 0.5, p.y - p.size * 0.5, p.size, p.size);
-        });
+        ctx.globalAlpha = alfa;
+        ctx.fillStyle = p.color;
+        ctx.fillRect(p.x - p.size / 2, p.y - p.size / 2, p.size, p.size);
         ctx.restore();
-    }
+    });
 
     // --- Textos flotantes ---
     animaciones.textosFlotantes.forEach(t => {
@@ -2506,9 +2495,9 @@ function cargarGraficos(callback) {
         setTimeout(() => {
             if (loadingScreen) {
                 loadingScreen.classList.add('ocultar');
-                // Remover del DOM al terminar la animación
+                // Remover del DOM al terminar la animación para liberar recursos
                 loadingScreen.addEventListener('animationend', () => {
-                    loadingScreen.style.display = 'none';
+                    loadingScreen.remove();
                 }, { once: true });
             }
             callback();
@@ -2593,49 +2582,51 @@ function gameLoop() {
     // ==========================================
     // CONTROL AUTOMÁTICO DE INTERFAZ HTML
     // ==========================================
-    const hudElement = document.getElementById('hud-ui');
-    const nodosUiElement = document.getElementById('nodos-ui');
-
     const menuPausaAbierto =
         (document.getElementById('pause-menu-ui') && document.getElementById('pause-menu-ui').style.display === 'flex') ||
         (document.getElementById('equipamiento-ui') && document.getElementById('equipamiento-ui').style.display === 'flex') ||
         (document.getElementById('mazo-ui') && document.getElementById('mazo-ui').style.display === 'flex') ||
         (document.getElementById('stats-ui') && document.getElementById('stats-ui').style.display === 'flex');
 
-    // En pasos 8 y 9 del tutorial queremos que el HUD sea VISIBLE (explicamos Bolsa/Mazos)
-    // Por eso los excluimos de enDialogoTutorial (solo ocultamos HUD en pasos que tapan el mapa)
     let enDialogoTutorial = (actoActual === 0 && [0, 1, 3, 5, 6, 10].includes(mapaTutorialPaso));
-    if (estadoActual === ESTADOS.MAPA && !menuPausaAbierto && !enDialogoTutorial) {
-        // Solo en el mapa mostramos el HUD de progreso y las etiquetas de los nodos (si no hay menús abiertos)
-        if (hudElement) hudElement.style.display = 'flex';
-        if (nodosUiElement) nodosUiElement.style.display = 'block';
-    } else {
-        // En COMBATE, TIENDA, EVENTO, MENU, GAMEOVER, o MENÃšS DE PAUSA ocultamos todo el HUD
-        if (hudElement) hudElement.style.display = 'none';
-        if (nodosUiElement) {
-            nodosUiElement.style.display = 'none';
-            nodosUiElement.innerHTML = ""; // Limpiamos los nodos para cuando regresemos
-        }
-    }
 
-    // ── Resaltar/apagar botones del HUD según el paso del tutorial ─────────
-    const _btnBolsa = document.getElementById('hud-btn-bolsa');
-    const _btnMazos = document.getElementById('hud-btn-mazos');
-    const _btnMenuH = document.getElementById('hud-btn-menu');
-    if (_btnBolsa && _btnMazos && _btnMenuH) {
-        if (actoActual === 0 && mapaTutorialPaso === 8) {
-            // Tutorial Bolsa: resaltar BOLSA, apagar los demás
-            _btnBolsa.classList.add('hud-btn-highlight');   _btnBolsa.classList.remove('hud-btn-dim');
-            _btnMazos.classList.add('hud-btn-dim');          _btnMazos.classList.remove('hud-btn-highlight');
-            _btnMenuH.classList.add('hud-btn-dim');          _btnMenuH.classList.remove('hud-btn-highlight');
-        } else if (actoActual === 0 && mapaTutorialPaso === 9) {
-            // Tutorial Mazos: resaltar MAZOS, apagar los demás
-            _btnMazos.classList.add('hud-btn-highlight');   _btnMazos.classList.remove('hud-btn-dim');
-            _btnBolsa.classList.add('hud-btn-dim');          _btnBolsa.classList.remove('hud-btn-highlight');
-            _btnMenuH.classList.add('hud-btn-dim');          _btnMenuH.classList.remove('hud-btn-highlight');
+    // Solo actualizar el DOM si hubo un cambio real en el estado del HUD para no matar los FPS (60 veces por segundo)
+    if (!window._lastHudHash) window._lastHudHash = "";
+    const currentHudHash = `${estadoActual}-${menuPausaAbierto}-${enDialogoTutorial}-${mapaTutorialPaso}`;
+
+    if (window._lastHudHash !== currentHudHash) {
+        window._lastHudHash = currentHudHash;
+
+        const hudElement = document.getElementById('hud-ui');
+        const nodosUiElement = document.getElementById('nodos-ui');
+
+        if (estadoActual === ESTADOS.MAPA && !menuPausaAbierto && !enDialogoTutorial) {
+            if (hudElement) hudElement.style.display = 'flex';
+            if (nodosUiElement) nodosUiElement.style.display = 'block';
         } else {
-            // Fuera del tutorial: restaurar todos los botones al estado normal
-            [_btnBolsa, _btnMazos, _btnMenuH].forEach(b => b.classList.remove('hud-btn-highlight', 'hud-btn-dim'));
+            if (hudElement) hudElement.style.display = 'none';
+            if (nodosUiElement) {
+                nodosUiElement.style.display = 'none';
+                nodosUiElement.innerHTML = ""; // Limpiar solo una vez cuando el estado cambia
+            }
+        }
+
+        // Resaltar/apagar botones del HUD según el paso del tutorial
+        const _btnBolsa = document.getElementById('hud-btn-bolsa');
+        const _btnMazos = document.getElementById('hud-btn-mazos');
+        const _btnMenuH = document.getElementById('hud-btn-menu');
+        if (_btnBolsa && _btnMazos && _btnMenuH) {
+            if (actoActual === 0 && mapaTutorialPaso === 8) {
+                _btnBolsa.classList.add('hud-btn-highlight');   _btnBolsa.classList.remove('hud-btn-dim');
+                _btnMazos.classList.add('hud-btn-dim');          _btnMazos.classList.remove('hud-btn-highlight');
+                _btnMenuH.classList.add('hud-btn-dim');          _btnMenuH.classList.remove('hud-btn-highlight');
+            } else if (actoActual === 0 && mapaTutorialPaso === 9) {
+                _btnMazos.classList.add('hud-btn-highlight');   _btnMazos.classList.remove('hud-btn-dim');
+                _btnBolsa.classList.add('hud-btn-dim');          _btnBolsa.classList.remove('hud-btn-highlight');
+                _btnMenuH.classList.add('hud-btn-dim');          _btnMenuH.classList.remove('hud-btn-highlight');
+            } else {
+                [_btnBolsa, _btnMazos, _btnMenuH].forEach(b => b.classList.remove('hud-btn-highlight', 'hud-btn-dim'));
+            }
         }
     }
 
