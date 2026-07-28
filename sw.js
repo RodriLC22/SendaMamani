@@ -1,4 +1,4 @@
-const CACHE_NAME = 'mamani-cache-v35';
+const CACHE_NAME = 'mamani-cache-v37';
 const urlsToCache = [
   './',
   './index.html',
